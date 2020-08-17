@@ -2,7 +2,9 @@
 const searchBtn=document.querySelector(".search-btn");
 const search=document.querySelector(".search-value");
 const searchResult=document.querySelector(".search-result");
-const lyrics=document.querySelector(".single-lyrics ");
+const lyricsDiv=document.querySelector(".single-lyrics ");
+const message=document.querySelector(".message");
+
 
 //API URL
 const apiURL='https://api.lyrics.ovh';
@@ -11,8 +13,16 @@ const apiURL='https://api.lyrics.ovh';
 async function  getLyrics(artist,songTitle){
     const res= await fetch(`${apiURL}/v1/${artist}/${songTitle}`);
     const data=await res.json();
-    lyrics.innerHTML=`<h2 class="text-success mb-4">${songTitle}</h2>
-    <pre class="lyric text-white">${data.lyrics}</pre>`;
+    const lyrics=data.lyrics;
+    if(lyrics!=undefined){
+        message.innerHTML="";
+        lyricsDiv.innerHTML=`<h2 class="text-success mb-4">${songTitle}</h2>
+        <h4 class="author lead"><span>${artist}</span></h4><br>
+        <pre class="lyric text-white">${lyrics}</pre>`;
+    }else{
+        lyricsDiv.innerHTML="";
+        message.innerHTML="<h1 class='text-center'>Sorry! We can't find the lyrics</h1>";
+    }
 }
 
 searchResult.addEventListener("click",e=>{
@@ -27,11 +37,13 @@ searchResult.addEventListener("click",e=>{
 
 //Search Song
 searchBtn.addEventListener('click',()=>{
-    lyrics.innerHTML="";
+    lyricsDiv.innerHTML="";
+    message.innerHTML="";
+    searchResult.innerHTML="";
     const searchValue=search.value.trim();
     search.value="";
     if(!searchValue){
-        searchResult.innerHTML="<h3 class='text-center'>Please type in the search box</h3>";
+        message.innerHTML="<h1 class='text-center'>Please type in the search box</h1>";
     }else{
         searchSongs(searchValue);
     }
